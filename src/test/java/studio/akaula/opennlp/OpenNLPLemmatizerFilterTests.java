@@ -25,7 +25,7 @@ import static org.apache.lucene.tests.analysis.BaseTokenStreamTestCase.assertTok
 
 public class OpenNLPLemmatizerFilterTests extends OpenNLPTestCase {
 
-    public void testBasicUsage() throws Exception {
+    public void testModel() throws Exception {
         IndexVersion version = IndexVersionUtils.randomVersion(random());
         IndexAnalyzers analyzers = getIndexAnalyzers(
             Settings.builder()
@@ -41,6 +41,25 @@ public class OpenNLPLemmatizerFilterTests extends OpenNLPTestCase {
             analyzers.get("en_opennlp").tokenStream("", "I'd far rather be happy than right any day."),
             new String[] { "i+would", "far", "rather", "be", "happy", "than", "right", "any", "day", "." },
             new String[] { "PRON+AUX", "ADV", "ADV", "AUX", "ADJ", "ADP", "ADJ", "DET", "NOUN", "PUNCT" }
+        );
+    }
+
+    public void testDictionary() throws Exception {
+        IndexVersion version = IndexVersionUtils.randomVersion(random());
+        IndexAnalyzers analyzers = getIndexAnalyzers(
+            Settings.builder()
+                .put(tokenizer("en_opennlp", "en", "ewt"))
+                .put(pos_filter("en_opennlp_pos", "en", "ewt"))
+                .put(lemmatizer_filter("en_opennlp_lemmatizer", "test-en-lemmatizer.dict"))
+                .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
+                .putList("index.analysis.analyzer.en_opennlp.filter", "en_opennlp_pos", "en_opennlp_lemmatizer")
+                .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
+                .build()
+        );
+        assertTokenStreamContents(
+            analyzers.get("en_opennlp").tokenStream("", "Isn't it enough to see that a garden is beautiful?"),
+            new String[] { "be not", "it", "enough", "to", "see", "that", "a", "garden", "be", "beautiful", "?" },
+            new String[] { "PRON", "PRON", "ADJ", "PART", "VERB", "PRON", "DET", "NOUN", "AUX", "ADJ", "PUNCT" }
         );
     }
 
