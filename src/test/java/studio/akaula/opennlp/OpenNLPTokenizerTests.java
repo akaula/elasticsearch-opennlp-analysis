@@ -15,23 +15,18 @@
  */
 package studio.akaula.opennlp;
 
-import org.elasticsearch.cluster.metadata.IndexMetadata;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.IndexVersion;
 import org.elasticsearch.index.analysis.IndexAnalyzers;
-import org.elasticsearch.test.index.IndexVersionUtils;
 
-import static org.apache.lucene.tests.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 
 public class OpenNLPTokenizerTests extends OpenNLPTestCase {
 
     public void testBasicUsage() throws Exception {
-        IndexVersion version = IndexVersionUtils.randomVersion(random());
         IndexAnalyzers analyzers = getIndexAnalyzers(
             Settings.builder()
                 .put(tokenizer("en_opennlp", "en", "ewt"))
                 .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
-                .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                 .build()
         );
         assertTokenStreamContents(
@@ -42,7 +37,6 @@ public class OpenNLPTokenizerTests extends OpenNLPTestCase {
     }
 
     public void testMissingModel() {
-        IndexVersion version = IndexVersionUtils.randomVersion(random());
 
         NullPointerException ex = expectThrows(
             NullPointerException.class,
@@ -51,7 +45,6 @@ public class OpenNLPTokenizerTests extends OpenNLPTestCase {
                     .put("index.analysis.tokenizer.en_opennlp.type", "opennlp")
                     .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
                     .put("index.analysis.tokenizer.en_opennlp.tokenizer_model_path", getModelPath("en", "ewt", "tokens"))
-                    .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                     .build()
             )
         );
@@ -64,7 +57,6 @@ public class OpenNLPTokenizerTests extends OpenNLPTestCase {
                     .put("index.analysis.tokenizer.en_opennlp.type", "opennlp")
                     .put("index.analysis.tokenizer.en_opennlp.sentence_model_path", getModelPath("en", "ewt", "sentence"))
                     .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
-                    .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                     .build()
             )
         );

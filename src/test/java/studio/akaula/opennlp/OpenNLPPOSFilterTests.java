@@ -15,25 +15,20 @@
  */
 package studio.akaula.opennlp;
 
-import org.elasticsearch.cluster.metadata.IndexMetadata;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.IndexVersion;
 import org.elasticsearch.index.analysis.IndexAnalyzers;
-import org.elasticsearch.test.index.IndexVersionUtils;
 
-import static org.apache.lucene.tests.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 
 public class OpenNLPPOSFilterTests extends OpenNLPTestCase {
 
     public void testBasicUsage() throws Exception {
-        IndexVersion version = IndexVersionUtils.randomVersion(random());
         IndexAnalyzers analyzers = getIndexAnalyzers(
             Settings.builder()
                 .put(tokenizer("en_opennlp", "en", "ewt"))
                 .put(pos_filter("en_opennlp_pos", "en", "ewt"))
                 .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
                 .putList("index.analysis.analyzer.en_opennlp.filter", "en_opennlp_pos")
-                .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                 .build()
         );
         assertTokenStreamContents(
@@ -44,7 +39,6 @@ public class OpenNLPPOSFilterTests extends OpenNLPTestCase {
     }
 
     public void testMissingModel() {
-        IndexVersion version = IndexVersionUtils.randomVersion(random());
 
         NullPointerException ex = expectThrows(
             NullPointerException.class,
@@ -54,7 +48,6 @@ public class OpenNLPPOSFilterTests extends OpenNLPTestCase {
                     .put("index.analysis.filter.en_opennlp_pos.type", "opennlp_pos")
                     .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
                     .putList("index.analysis.analyzer.en_opennlp.filter", "en_opennlp_pos")
-                    .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                     .build()
             )
         );

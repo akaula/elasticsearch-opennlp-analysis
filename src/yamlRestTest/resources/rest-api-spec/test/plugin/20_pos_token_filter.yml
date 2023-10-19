@@ -5,22 +5,25 @@
       indices.analyze:
         body:
           text: "“Funny,” he intoned funereally, “how just when you think life can’t possibly get any worse it suddenly does.”"
-          tokenizer: standard
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-en-ud-ewt-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-tokens.bin"
           filter:
             - type: "opennlp_pos"
               pos_model_path: "opennlp_analysis/opennlp-en-ud-ewt-pos.bin"
-  - length: { tokens: 18 }
-  - match: { tokens.0.token: "Funny" }
-  - match: { tokens.0.type: "ADJ" }
-  - match: { tokens.1.token: "he" }
-  - match: { tokens.1.type: "PRON" }
-  - match: { tokens.2.token: "intoned" }
-  - match: { tokens.2.type: "VERB" }
-  - match: { tokens.3.token: "funereally" }
-  - match: { tokens.3.type: "PRON" }
-  - match: { tokens.4.token: "how" }
-  - match: { tokens.4.type: "ADV" }
-  - match: { tokens.10.token: "can’t" }
-  - match: { tokens.10.type: "AUX+PART" }
+  - length: { tokens: 25 }
+  - match: { tokens.1.token: "Funny" }
+  - match: { tokens.1.type: "ADJ" }
+  - match: { tokens.4.token: "he" }
+  - match: { tokens.4.type: "PRON" }
+  - match: { tokens.5.token: "intoned" }
+  - match: { tokens.5.type: "VERB" }
+  - match: { tokens.6.token: "funereally" }
+  - match: { tokens.6.type: "ADV" }
+  - match: { tokens.9.token: "how" }
+  - match: { tokens.9.type: "ADV" }
+  - match: { tokens.15.token: "can’t" }
+  - match: { tokens.15.type: "AUX+PART" }
 
 

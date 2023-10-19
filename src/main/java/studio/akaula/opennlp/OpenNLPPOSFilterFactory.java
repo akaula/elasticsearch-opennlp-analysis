@@ -24,6 +24,7 @@ import org.apache.lucene.analysis.opennlp.OpenNLPPOSFilter;
 import org.apache.lucene.analysis.opennlp.tools.NLPPOSTaggerOp;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
+import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenFilterFactory;
 
 import java.io.IOException;
@@ -37,8 +38,14 @@ public class OpenNLPPOSFilterFactory extends AbstractTokenFilterFactory {
 
     private final CachedResourceLoader<POSModel> posModelCache;
 
-    public OpenNLPPOSFilterFactory(CachedResourceLoader<POSModel> posModelCache, Environment environment, String name, Settings settings) {
-        super(name, settings);
+    public OpenNLPPOSFilterFactory(
+        CachedResourceLoader<POSModel> posModelCache,
+        Environment environment,
+        IndexSettings indexSettings,
+        String name,
+        Settings settings
+    ) {
+        super(indexSettings, name, settings);
         this.posModelCache = posModelCache;
         posModelPath = resolvePath(environment, settings, "pos_model");
     }

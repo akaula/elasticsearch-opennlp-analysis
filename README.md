@@ -13,7 +13,10 @@ Please, make sure that the plugin URL corresponds to the version of elasticsearc
 | Elasticsearch Version | Plugin URL |
 |-----------------------|------------|
 | v8.11.4               | TBD        |
-| v7.11.14              | TBD        |
+| v7.17.14              | TBD        |
+| v7.17.13              | TBD        |
+| v7.17.12              | TBD        |
+| v7.17.11              | TBD        |
 
 
 The installation command needs to be executed on all nodes in the cluster, after which all nodes have to be restarted before you can start 

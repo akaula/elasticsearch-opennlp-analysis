@@ -16,7 +16,6 @@
 
 package studio.akaula.opennlp;
 
-import opennlp.tools.lemmatizer.DictionaryLemmatizer;
 import opennlp.tools.lemmatizer.LemmatizerModel;
 import studio.akaula.utils.CachedResourceLoader;
 
@@ -25,9 +24,14 @@ import org.apache.lucene.analysis.opennlp.OpenNLPLemmatizerFilter;
 import org.apache.lucene.analysis.opennlp.tools.NLPLemmatizerOp;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
+import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenFilterFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static studio.akaula.utils.SettingsUtils.resolvePath;
@@ -37,22 +41,34 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
 
     private final Path dictionaryPath;
 
-    private final CachedResourceLoader<DictionaryLemmatizer> dictionaryLemmatizerCache;
+    private final CachedResourceLoader<byte[]> dictionaryLemmatizerCache;
     private final CachedResourceLoader<LemmatizerModel> lemmatizerModelCache;
 
     public OpenNLPLemmatizerFilterFactory(
-        CachedResourceLoader<DictionaryLemmatizer> dictionaryLemmatizerCache,
+
+        CachedResourceLoader<byte[]> dictionaryLemmatizerCache,
         CachedResourceLoader<LemmatizerModel> lemmatizerModelCache,
         Environment environment,
+        IndexSettings indexSettings,
         String name,
         Settings settings
     ) {
-        super(name, settings);
+        super(indexSettings, name, settings);
         this.dictionaryLemmatizerCache = dictionaryLemmatizerCache;
         this.lemmatizerModelCache = lemmatizerModelCache;
 
         dictionaryPath = resolvePath(environment, settings, "dictionary");
         lemmatizerModelPath = resolvePath(environment, settings, "lemmatizer_model");
+    }
+
+    private static byte[] readDictionary(Path dictionaryPath) throws IOException {
+        try (
+            InputStream inputStream = Files.newInputStream(dictionaryPath);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ) {
+            inputStream.transferTo(outputStream);
+            return outputStream.toByteArray();
+        }
     }
 
     @Override
@@ -63,10 +79,13 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
             );
         }
 
-        DictionaryLemmatizer dictionaryLemmatizer = null;
+        byte[] dictionaryLemmatizer = null;
         if (dictionaryPath != null) {
             try {
-                dictionaryLemmatizer = dictionaryLemmatizerCache.getOrLoadResource(dictionaryPath, DictionaryLemmatizer::new);
+                dictionaryLemmatizer = dictionaryLemmatizerCache.getOrLoadResource(
+                    dictionaryPath,
+                    OpenNLPLemmatizerFilterFactory::readDictionary
+                );
             } catch (IOException exception) {
                 throw new IllegalArgumentException(
                     "Cannot load dictionary from [" + dictionaryPath + "] for opennlp_lemmatizer [" + this.name() + "]",
@@ -89,7 +108,17 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
 
         NLPLemmatizerOp lemmatizerOp;
         try {
-            lemmatizerOp = new NLPLemmatizerOp(dictionaryLemmatizer, lemmatizerModel);
+            InputStream dictionaryInputStream = null;
+            try {
+                if (dictionaryLemmatizer != null) {
+                    dictionaryInputStream = new ByteArrayInputStream(dictionaryLemmatizer);
+                }
+                lemmatizerOp = new NLPLemmatizerOp(dictionaryInputStream, lemmatizerModel);
+            } finally {
+                if (dictionaryInputStream != null) {
+                    dictionaryInputStream.close();
+                }
+            }
         } catch (IOException exception) {
             throw new IllegalArgumentException(
                 "Cannot build lemmatizer model from"

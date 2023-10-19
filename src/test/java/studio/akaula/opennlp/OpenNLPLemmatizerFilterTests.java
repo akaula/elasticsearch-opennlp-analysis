@@ -15,18 +15,14 @@
  */
 package studio.akaula.opennlp;
 
-import org.elasticsearch.cluster.metadata.IndexMetadata;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.IndexVersion;
 import org.elasticsearch.index.analysis.IndexAnalyzers;
-import org.elasticsearch.test.index.IndexVersionUtils;
 
-import static org.apache.lucene.tests.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
+import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 
 public class OpenNLPLemmatizerFilterTests extends OpenNLPTestCase {
 
-    public void testBasicUsage() throws Exception {
-        IndexVersion version = IndexVersionUtils.randomVersion(random());
+    public void testModel() throws Exception {
         IndexAnalyzers analyzers = getIndexAnalyzers(
             Settings.builder()
                 .put(tokenizer("en_opennlp", "en", "ewt"))
@@ -34,7 +30,6 @@ public class OpenNLPLemmatizerFilterTests extends OpenNLPTestCase {
                 .put(lemmatizer_filter("en_opennlp_lemmatizer", "en", "ewt"))
                 .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
                 .putList("index.analysis.analyzer.en_opennlp.filter", "en_opennlp_pos", "en_opennlp_lemmatizer")
-                .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                 .build()
         );
         assertTokenStreamContents(
@@ -44,9 +39,24 @@ public class OpenNLPLemmatizerFilterTests extends OpenNLPTestCase {
         );
     }
 
-    public void testMissingModel() {
-        IndexVersion version = IndexVersionUtils.randomVersion(random());
+    public void testDictionary() throws Exception {
+        IndexAnalyzers analyzers = getIndexAnalyzers(
+            Settings.builder()
+                .put(tokenizer("en_opennlp", "en", "ewt"))
+                .put(pos_filter("en_opennlp_pos", "en", "ewt"))
+                .put(lemmatizer_filter("en_opennlp_lemmatizer", "test-en-lemmatizer.dict"))
+                .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
+                .putList("index.analysis.analyzer.en_opennlp.filter", "en_opennlp_pos", "en_opennlp_lemmatizer")
+                .build()
+        );
+        assertTokenStreamContents(
+            analyzers.get("en_opennlp").tokenStream("", "Isn't it enough to see that a garden is beautiful?"),
+            new String[] { "be not", "it", "enough", "to", "see", "that", "a", "garden", "be", "beautiful", "?" },
+            new String[] { "PRON", "PRON", "ADJ", "PART", "VERB", "PRON", "DET", "NOUN", "AUX", "ADJ", "PUNCT" }
+        );
+    }
 
+    public void testMissingModel() {
         NullPointerException ex = expectThrows(
             NullPointerException.class,
             () -> getIndexAnalyzers(
@@ -56,7 +66,6 @@ public class OpenNLPLemmatizerFilterTests extends OpenNLPTestCase {
                     .put("index.analysis.filter.en_opennlp_lemmatizer.type", "opennlp_lemmatizer")
                     .put("index.analysis.analyzer.en_opennlp.tokenizer", "en_opennlp")
                     .putList("index.analysis.analyzer.en_opennlp.filter", "en_opennlp_pos", "en_opennlp_lemmatizer")
-                    .put(IndexMetadata.SETTING_VERSION_CREATED, version.id())
                     .build()
             )
         );

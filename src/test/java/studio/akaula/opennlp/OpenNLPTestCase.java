@@ -60,4 +60,12 @@ public class OpenNLPTestCase extends ESTestCase {
             .put("index.analysis.filter." + name + ".lemmatizer_model_path", getModelPath(language, dataSet, "lemmatizer"))
             .build();
     }
+
+    public Settings lemmatizer_filter(String name, String dictionary) {
+        return Settings.builder()
+            // Setup en_opennlp tokenizer
+            .put("index.analysis.filter." + name + ".type", "opennlp_lemmatizer")
+            .put("index.analysis.filter." + name + ".dictionary_path", getDataPath("/" + dictionary))
+            .build();
+    }
 }
