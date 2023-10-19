@@ -1,0 +1,127 @@
+---
+setup:
+  - do:
+      indices.create:
+        index: test
+        body:
+          settings:
+            index:
+              number_of_shards: 1
+              number_of_replicas: 0
+              analysis:
+                tokenizer:
+                  en_opennlp:
+                    type: "opennlp"
+                    sentence_model_path: "opennlp_analysis/opennlp-en-ud-ewt-sentence.bin"
+                    tokenizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-tokens.bin"
+                filter:
+                  en_opennlp_pos:
+                    type: "opennlp_pos"
+                    pos_model_path: "opennlp_analysis/opennlp-en-ud-ewt-pos.bin"
+                  en_opennlp_lemmatizer:
+                    type: "opennlp_lemmatizer"
+                    lemmatizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-lemmatizer.bin"
+                analyzer:
+                  en_opennlp:
+                    tokenizer: en_opennlp
+                    filter: ["en_opennlp_pos", "en_opennlp_lemmatizer"]
+          mappings:
+            properties:
+              quote:
+                type: text
+                analyzer: en_opennlp
+  - do:
+      bulk:
+        index: test
+        refresh: true
+        body:
+          - { "index": { } }
+          - { "quote": "Don't Panic" }
+          - { "index": { } }
+          - { "quote": "Time is an illusion. Lunchtime doubly so." }
+          - { "index": { } }
+          - { "quote": "Would it save you a lot of time if I just gave up and went mad now?" }
+          - { "index": { } }
+          - { "quote": "Isn't it enough to see that a garden is beautiful without having to believe that there are fairies at the bottom of it too?" }
+          - { "index": { } }
+          - { "quote": "The ships hung in the sky in much the same way that bricks don't." }
+          - { "index": { } }
+          - { "quote": "If there's anything more important than my ego around, I want it caught and shot now." }
+          - { "index": { } }
+          - { "quote": "For a moment, nothing happened. Then, after a second or so, nothing continued to happen." }
+          - { "index": { } }
+          - { "quote": "The Answer to the Great Question... Of Life, the Universe and Everything... Is... Forty-two" }
+          - { "index": { } }
+          - { "quote": "Anyone who is capable of getting themselves made President should on no account be allowed to do the job." }
+
+---
+teardown:
+  - do:
+      indices.delete:
+        index: test
+        ignore_unavailable: true
+
+---
+"Ensure that analyzer is setup correctly.":
+  - do:
+      indices.analyze:
+        index: test
+        body:
+          text:  "Don't Panic."
+          field: quote
+  - length: { tokens: 3 }
+  - match:  { tokens.0.token: "do+not" }
+  - match:  { tokens.1.token: "panic" }
+  - match:  { tokens.2.token: "." }
+
+---
+"Perform Simple searches.":
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: "test"
+        body:
+          query:
+            match_all: {}
+  - match: { hits.total: 9 }
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: "test"
+        body:
+          query:
+            match:
+              "quote": "panic"
+  - match: { hits.total: 1 }
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: "test"
+        body:
+          query:
+            match:
+              "quote": "brick"
+  - match: { hits.total: 1 }
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: "test"
+        body:
+          query:
+            match:
+              "quote": "happening"
+  - match: { hits.total: 1 }
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: "test"
+        body:
+          query:
+            match:
+              "quote": "times"
+  - match: { hits.total: 2 }

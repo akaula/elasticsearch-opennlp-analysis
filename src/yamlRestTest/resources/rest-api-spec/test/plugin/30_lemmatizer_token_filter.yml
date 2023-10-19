@@ -1,0 +1,143 @@
+## Sample rest test
+---
+"Test OpenNLP Lemmatizer with dictionary":
+  - do:
+      indices.analyze:
+        body:
+          text:  Isn't it enough to see that a garden is beautiful without having to believe that there are fairies at the bottom of it too?
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-en-ud-ewt-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-tokens.bin"
+          filter:
+            - type: "opennlp_pos"
+              pos_model_path: "opennlp_analysis/opennlp-en-ud-ewt-pos.bin"
+            - type: "opennlp_lemmatizer"
+              dictionary_path: "opennlp_analysis/test-en-lemmatizer.dict"
+  - length: { tokens: 25 }
+  - match:  { tokens.0.token: "be not" }
+  - match:  { tokens.1.token: "it" }
+  - match:  { tokens.8.token: "be" }
+  - match:  { tokens.11.token: "have" }
+  - match:  { tokens.16.token: "be" }
+  - match:  { tokens.17.token: "fairy" }
+
+---
+"Test OpenNLP Lemmatizer with trained model for english":
+  - do:
+      indices.analyze:
+        body:
+          text:  Isn't it enough to see that a garden is beautiful without having to believe that there are fairies at the bottom of it too?
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-en-ud-ewt-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-tokens.bin"
+          filter:
+            - type: "opennlp_pos"
+              pos_model_path: "opennlp_analysis/opennlp-en-ud-ewt-pos.bin"
+            - type: "opennlp_lemmatizer"
+              lemmatizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-lemmatizer.bin"
+  - length: { tokens: 25 }
+  - match:  { tokens.0.token: "isn't" }
+  - match:  { tokens.0.type: "PRON" }
+  - match:  { tokens.1.token: "it" }
+  - match:  { tokens.1.type: "PRON" }
+  - match:  { tokens.8.token: "be" }
+  - match:  { tokens.8.type: "AUX" }
+  - match:  { tokens.11.token: "have" }
+  - match:  { tokens.11.type: "VERB" }
+  - match:  { tokens.16.token: "be" }
+  - match:  { tokens.16.type: "VERB" }
+  - match:  { tokens.17.token: "fairy" }
+  - match:  { tokens.17.type: "NOUN" }
+
+---
+"Stress Test OpenNLP Lemmatizer with trained model for english":
+  - do:
+      indices.analyze:
+        body:
+          text: Twas brillig, and the slithy toves did gyre and gimble in the wabe; all mimsy were the borogoves, and the mome raths outgrabe.
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-en-ud-ewt-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-tokens.bin"
+          filter:
+            - type: "opennlp_pos"
+              pos_model_path: "opennlp_analysis/opennlp-en-ud-ewt-pos.bin"
+            - type: "opennlp_lemmatizer"
+              lemmatizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-lemmatizer.bin"
+  - length: { tokens: 27 }
+  - match:  { tokens.0.token: "twas" }
+  - match:  { tokens.0.type: "PROPN" }
+  - match:  { tokens.1.token: "brillig" }
+  - match:  { tokens.1.type: "ADJ" }
+  - match:  { tokens.6.token: "tove" }
+  - match:  { tokens.6.type: "NOUN" }
+  - match:  { tokens.17.token: "be" }
+  - match:  { tokens.17.type: "AUX" }
+  - match:  { tokens.19.token: "borogove" }
+  - match:  { tokens.19.type: "NOUN" }
+  - match:  { tokens.23.token: "mome" }
+  - match:  { tokens.23.type: "NOUN" }
+  - match:  { tokens.24.token: "rath" }
+  - match:  { tokens.24.type: "NOUN" }
+
+---
+"Stress Test OpenNLP Lemmatizer with trained model for hebrew":
+  - do:
+      indices.analyze:
+        body:
+          text:  הִבְרִיל כְבָר, זַחְלָצִים קְלִיחִים חָגְווּ וְעָגוּ בַשְבִילֵל, מַסִים הָיוּ הַסְמַרְלַחִים וְחֶזְרוֹנִי צִרְלֵל. ”'זָהֵר מִגֶבֶרִיק, בָחוּר! שִנָיו נוֹשְכוֹת, טָפְרוֹ חָזָק! 'זָהֵר מִגַבְגַב עָף, וְסוּר מִבַנְדֶרְצְבַט הַזָף!“
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-he-ud-iahltwiki-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-he-ud-iahltwiki-tokens.bin"
+          filter:
+            - type: "opennlp_pos"
+              pos_model_path: "opennlp_analysis/opennlp-he-ud-iahltwiki-pos.bin"
+            - type: "opennlp_lemmatizer"
+              lemmatizer_model_path: "opennlp_analysis/opennlp-he-ud-iahltwiki-lemmatizer.bin"
+  - length: { tokens: 33 }
+  - match:  { tokens.0.token: "הִבְרִיל" }
+  - match:  { tokens.0.type: "NOUN" }
+  - match:  { tokens.1.token: "כְבָר" }
+  - match:  { tokens.1.type: "ADJ" }
+  - match:  { tokens.3.token: "זַחְלָצִים" }
+  - match:  { tokens.3.type: "NOUN" }
+  - match:  { tokens.4.token: "קְלִיחִים" }
+  - match:  { tokens.4.type: "ADJ" }
+  - match:  { tokens.6.token: "וְעָגוּ" }
+  - match:  { tokens.6.type: "ADP" }
+  - match:  { tokens.12.token: "וְחֶזְרוֹ+נִי" }
+  - match:  { tokens.12.type: "ADP+NOUN" }
+  - match:  { tokens.30.token: "מִבַנְדֶרְצְבַט" }
+  - match:  { tokens.30.type: "NOUN" }
+
+---
+"Stress Test OpenNLP Lemmatizer with trained model for russian":
+  - do:
+      indices.analyze:
+        body:
+          text:  Варкалось. Хливкие шорьки пырялись по наве, и хрюкотали зелюки, как мюмзики в мове.
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-ru-ud-taiga-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-ru-ud-taiga-tokens.bin"
+          filter:
+            - type: "opennlp_pos"
+              pos_model_path: "opennlp_analysis/opennlp-ru-ud-taiga-pos.bin"
+            - type: "opennlp_lemmatizer"
+              lemmatizer_model_path: "opennlp_analysis/opennlp-ru-ud-taiga-lemmatizer.bin"
+  - length: { tokens: 17 }
+  - match:  { tokens.0.token: "варкаться" }
+  - match:  { tokens.0.type: "VERB" }
+  - match:  { tokens.2.token: "хливкий" }
+  - match:  { tokens.2.type: "ADJ" }
+  - match:  { tokens.3.token: "шорька" }
+  - match:  { tokens.3.type: "NOUN" }
+  - match:  { tokens.4.token: "пыряться" }
+  - match:  { tokens.4.type: "VERB" }
+  - match:  { tokens.6.token: "наве" }
+  - match:  { tokens.6.type: "NOUN" }
+  - match:  { tokens.13.token: "мюмзика" }
+  - match:  { tokens.13.type: "NOUN" }

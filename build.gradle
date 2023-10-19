@@ -1,0 +1,121 @@
+buildscript {
+  repositories {
+    maven {
+      url = 'https://snapshots.elastic.co/maven/'
+    }
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.elasticsearch.gradle:build-tools:${pluginApiVersion}"
+    classpath "com.diffplug.spotless:spotless-plugin-gradle:${spotlessVersion}"
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'elasticsearch.esplugin'
+apply plugin: 'elasticsearch.yaml-rest-test'
+apply plugin: 'checkstyle'
+apply plugin: "com.diffplug.spotless"
+
+esplugin {
+  name 'opennlp-analysis'
+  description 'OpenNLP analysis plugin'
+  classname 'studio.akaula.opennlp.OpenNLPAnalysisPlugin'
+  licenseFile rootProject.file('LICENSE-2.0.txt')
+  noticeFile rootProject.file('NOTICE.txt')
+}
+
+spotless {
+  java {
+    target("src/**/*.java")
+    removeUnusedImports()
+
+    // We enforce a standard order for imports
+    importOrderFile("config/formatter/elastic.importorder")
+
+    // Most formatting is done through the Eclipse formatter
+    eclipse().configFile("config/formatter/formatterConfig.xml")
+
+    trimTrailingWhitespace()
+  }
+}
+
+if (release.toBoolean()) {
+  version="${pluginApiVersion}.${revision}"
+} else {
+  if (pluginApiVersion.endsWith('-SNAPSHOT')) {
+    version="${pluginApiVersion.substring(0, pluginApiVersion.length() - '-SNAPSHOT'.length())}.${revision}-SNAPSHOT"
+  } else {
+    version="${pluginApiVersion}.${revision}-SNAPSHOT"
+  }
+}
+
+group="studio.akaula.opennlp"
+
+repositories {
+  // Only necessary when building plugins against SNAPSHOT versions of Elasticsearch
+  maven {
+    url = 'https://snapshots.elastic.co/maven/'
+  }
+  if (pluginApiVersion.contains('-SNAPSHOT')) {
+    maven {
+      url = "https://artifacts-snapshot.elastic.co/elasticsearch/${pluginApiVersion}/maven"
+      mavenContent {
+        includeModule 'org.elasticsearch', 'elasticsearch'
+      }
+    }
+  }
+
+  if (luceneVersion.contains('-snapshot')) {
+    maven {
+      def matcher = luceneVersion =~ /[0-9.]+-snapshot-([a-z0-9]+)/
+      assert matcher.matches(): "Invalid Lucene snapshot version '${luceneVersion}'"
+      url = "https://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/${matcher.group(1)}"
+    }
+  }
+
+  mavenCentral()
+}
+
+dependencies {
+  compileOnly "org.elasticsearch:elasticsearch:${pluginApiVersion}"
+  compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-api:${pluginApiVersion}"
+  compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${pluginApiVersion}"
+  compileOnly "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
+
+  implementation ("org.apache.lucene:lucene-analysis-opennlp:${luceneVersion}") {
+    exclude group: 'org.apache.opennlp'
+  }
+  implementation "org.apache.opennlp:opennlp-tools:${opennlpVersion}"
+
+  testImplementation "org.elasticsearch:elasticsearch:${pluginApiVersion}"
+  testImplementation "org.elasticsearch.test:framework:${pluginApiVersion}"
+  testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-api:${pluginApiVersion}"
+  testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${pluginApiVersion}"
+  testImplementation "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
+  testImplementation ("junit:junit:${junitVersion}"){
+    exclude group: 'org.hamcrest'
+  }
+  testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
+}
+
+afterEvaluate {
+  testClusters.matching { it.name == "yamlRestTest"}.configureEach {
+    extraConfigFile 'opennlp_analysis/test-en-lemmatizer.dict', file("src/test/resources/test-en-lemmatizer.dict")
+
+    extraConfigFile 'opennlp_analysis/opennlp-en-ud-ewt-pos.bin', file("src/test/resources/en-ud-ewt-2.12/opennlp-en-ud-ewt-pos-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-en-ud-ewt-sentence.bin', file("src/test/resources/en-ud-ewt-2.12/opennlp-en-ud-ewt-sentence-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-en-ud-ewt-tokens.bin', file("src/test/resources/en-ud-ewt-2.12/opennlp-en-ud-ewt-tokens-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-en-ud-ewt-lemmatizer.bin', file("src/test/resources/en-ud-ewt-2.12/opennlp-en-ud-ewt-lemmatizer-2.12-1.9.4.bin")
+
+    extraConfigFile 'opennlp_analysis/opennlp-he-ud-iahltwiki-pos.bin', file("src/test/resources/he-ud-iahltwiki-2.12/opennlp-he-ud-iahltwiki-pos-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-he-ud-iahltwiki-sentence.bin', file("src/test/resources/he-ud-iahltwiki-2.12/opennlp-he-ud-iahltwiki-sentence-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-he-ud-iahltwiki-tokens.bin', file("src/test/resources/he-ud-iahltwiki-2.12/opennlp-he-ud-iahltwiki-tokens-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-he-ud-iahltwiki-lemmatizer.bin', file("src/test/resources/he-ud-iahltwiki-2.12/opennlp-he-ud-iahltwiki-lemmatizer-2.12-1.9.4.bin")
+
+    extraConfigFile 'opennlp_analysis/opennlp-ru-ud-taiga-pos.bin', file("src/test/resources/ru-ud-taiga-2.12/opennlp-ru-ud-taiga-pos-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-ru-ud-taiga-sentence.bin', file("src/test/resources/ru-ud-taiga-2.12/opennlp-ru-ud-taiga-sentence-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-ru-ud-taiga-tokens.bin', file("src/test/resources/ru-ud-taiga-2.12/opennlp-ru-ud-taiga-tokens-2.12-1.9.4.bin")
+    extraConfigFile 'opennlp_analysis/opennlp-ru-ud-taiga-lemmatizer.bin', file("src/test/resources/ru-ud-taiga-2.12/opennlp-ru-ud-taiga-lemmatizer-2.12-1.9.4.bin")
+  }
+}

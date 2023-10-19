@@ -1,0 +1,26 @@
+## Sample rest test
+---
+"POS Token Filter test":
+  - do:
+      indices.analyze:
+        body:
+          text: "“Funny,” he intoned funereally, “how just when you think life can’t possibly get any worse it suddenly does.”"
+          tokenizer: standard
+          filter:
+            - type: "opennlp_pos"
+              pos_model_path: "opennlp_analysis/opennlp-en-ud-ewt-pos.bin"
+  - length: { tokens: 18 }
+  - match: { tokens.0.token: "Funny" }
+  - match: { tokens.0.type: "ADJ" }
+  - match: { tokens.1.token: "he" }
+  - match: { tokens.1.type: "PRON" }
+  - match: { tokens.2.token: "intoned" }
+  - match: { tokens.2.type: "VERB" }
+  - match: { tokens.3.token: "funereally" }
+  - match: { tokens.3.type: "PRON" }
+  - match: { tokens.4.token: "how" }
+  - match: { tokens.4.type: "ADV" }
+  - match: { tokens.10.token: "can’t" }
+  - match: { tokens.10.type: "AUX+PART" }
+
+
