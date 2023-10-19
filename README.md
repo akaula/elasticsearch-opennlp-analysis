@@ -62,7 +62,7 @@ The `opennlp` tokenizer wraps OpenNLP Sentence Detector and Tokenizer. The token
 Assuming that both models reside in the `config/opennlp-analysys` directory the following elasticsearch command will test the tokenizer
 on the supplied string:
 
-```json
+```
 POST _analyze
 {
   "tokenizer": {
@@ -84,7 +84,7 @@ specified:
 Assuming that the pos models reside in the `config/opennlp-analysys` directory the following elasticsearch command will test the token
 filter on the supplied string:
 
-```json
+```
 POST _analyze
 {
   "tokenizer": {
@@ -121,7 +121,7 @@ Assuming that the pos models reside in the `config/opennlp-analysys/en-ud-ewt-2.
 the token filter on the supplied string. Please, not that for the optimal performance it is using `opennlp` tokenizer and `opennlp_pos` 
 token filter prior to invoking the lemmatizer.
 
-```json
+```
 POST _analyze
 {
   "tokenizer": {
@@ -159,7 +159,7 @@ Combining all these methods together we will end up with the analyzer like this:
 
 
 
-```json
+```
 PUT test
 {
   "settings": {
