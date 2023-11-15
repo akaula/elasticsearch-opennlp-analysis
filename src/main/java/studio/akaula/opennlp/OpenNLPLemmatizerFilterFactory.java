@@ -23,6 +23,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.opennlp.OpenNLPLemmatizerFilter;
 import org.apache.lucene.analysis.opennlp.tools.NLPLemmatizerOp;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.core.internal.io.Streams;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenFilterFactory;
@@ -66,7 +67,7 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
             InputStream inputStream = Files.newInputStream(dictionaryPath);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ) {
-            inputStream.transferTo(outputStream);
+            Streams.copy(inputStream, outputStream);
             return outputStream.toByteArray();
         }
     }

@@ -40,7 +40,7 @@ public class OpenNLPAnalysisPlugin extends Plugin implements AnalysisPlugin {
 
     @Override
     public Map<String, AnalysisModule.AnalysisProvider<TokenFilterFactory>> getTokenFilters() {
-        return Map.of(
+        return org.elasticsearch.common.collect.Map.of(
             "opennlp_lemmatizer",
             (indexSettings, environment, name, settings) -> new OpenNLPLemmatizerFilterFactory(
                 dictionaryLemmatizerCache,
@@ -63,7 +63,7 @@ public class OpenNLPAnalysisPlugin extends Plugin implements AnalysisPlugin {
 
     @Override
     public Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> getTokenizers() {
-        return Map.of(
+        return org.elasticsearch.common.collect.Map.of(
             "opennlp",
             (indexSettings, environment, name, settings) -> new OpenNLPTokenizerFactory(
                 sentenceModelCache,

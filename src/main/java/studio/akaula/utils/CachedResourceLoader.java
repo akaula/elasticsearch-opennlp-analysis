@@ -16,7 +16,7 @@
 
 package studio.akaula.utils;
 
-import org.elasticsearch.core.CheckedFunction;
+import org.elasticsearch.common.CheckedFunction;
 
 import java.io.IOException;
 import java.lang.ref.ReferenceQueue;

@@ -3,7 +3,7 @@ def versionsDir=new File(buildDir, "versions")
 versionsDir.mkdirs()
 def versionsFile =  new File(versionsDir, "versions-${elasticsearch_branch}.properties")
 if (!versionsFile.exists()) {
-  new URL("https://raw.githubusercontent.com/elastic/elasticsearch/${elasticsearch_branch}/build-tools-internal/version.properties")
+  new URL("https://raw.githubusercontent.com/elastic/elasticsearch/${elasticsearch_branch}/buildSrc/version.properties")
           .withInputStream{ i -> versionsFile.withOutputStream{ it << i }}
 }
 def versions = new Properties()
@@ -18,6 +18,7 @@ task printProps {
 def luceneVersion = versions.getProperty("lucene")
 def junitVersion = versions.getProperty("junit")
 def hamcrestVersion = versions.getProperty("hamcrest")
+def log4jVersion = versions.getProperty("log4j")
 
 buildscript {
   repositories {
@@ -25,6 +26,7 @@ buildscript {
       url = 'https://snapshots.elastic.co/maven/'
     }
     mavenCentral()
+    gradlePluginPortal()
   }
   dependencies {
     classpath "org.elasticsearch.gradle:build-tools:${pluginApiVersion}"
@@ -136,4 +138,34 @@ afterEvaluate {
     extraConfigFile 'opennlp_analysis/opennlp-ru-ud-taiga-tokens.bin', file("src/test/resources/ru-ud-taiga-2.12/opennlp-ru-ud-taiga-tokens-2.12-1.9.4.bin")
     extraConfigFile 'opennlp_analysis/opennlp-ru-ud-taiga-lemmatizer.bin', file("src/test/resources/ru-ud-taiga-2.12/opennlp-ru-ud-taiga-lemmatizer-2.12-1.9.4.bin")
   }
+}
+
+project.forbiddenPatterns {
+  exclude '**/*.bin'
+  exclude '**/*.dict'
+  exclude '**/en-ud-ewt-2.12/README.md'
+}
+
+licenseHeaders {
+  licenseHeaders.enabled = false
+}
+
+dependencyLicenses {
+  dependencyLicenses.enabled = false
+}
+
+thirdPartyAudit {
+  thirdPartyAudit.enabled = false
+}
+
+validateNebulaPom {
+  validateNebulaPom.enabled = false
+}
+
+loggerUsageCheck {
+  loggerUsageCheck.enabled = false
+}
+
+testingConventions {
+  testingConventions.enabled = false
 }

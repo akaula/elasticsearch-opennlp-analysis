@@ -15,7 +15,8 @@
  */
 package studio.akaula.utils;
 
-import org.elasticsearch.core.CheckedFunction;
+import org.elasticsearch.common.CheckedFunction;
+import org.elasticsearch.common.io.PathUtils;
 import org.elasticsearch.test.ESTestCase;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class CachedResourceLoaderTests extends ESTestCase {
 
         System.gc();
 
-        Path firstPath = Path.of("first");
+        Path firstPath = PathUtils.get("first");
         String first = cachedLoader.getOrLoadResource(firstPath, loader);
         assertThat(first, equalTo("first_resource"));
         assertThat(loadCounter.get(), equalTo(3));
@@ -48,7 +49,7 @@ public class CachedResourceLoaderTests extends ESTestCase {
         CheckedFunction<Path, String, IOException> loader,
         AtomicInteger loadCounter
     ) throws Exception {
-        Path firstPath = Path.of("first");
+        Path firstPath = PathUtils.get("first");
         String first = cachedLoader.getOrLoadResource(firstPath, loader);
         assertThat(first, equalTo("first_resource"));
 
@@ -56,7 +57,7 @@ public class CachedResourceLoaderTests extends ESTestCase {
         assertThat(first_again, equalTo("first_resource"));
         assertThat(loadCounter.get(), equalTo(1));
 
-        Path secondPath = Path.of("second");
+        Path secondPath = PathUtils.get("second");
         String second = cachedLoader.getOrLoadResource(secondPath, loader);
         assertThat(second, equalTo("second_resource"));
 
