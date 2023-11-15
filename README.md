@@ -8,16 +8,7 @@ The plugin can be installed using the plugin manager utility:
 ```shell
 sudo bin/elasticsearch-plugin install https://plugin_url/
 ```
-Please, make sure that the plugin URL corresponds to the version of elasticsearch that you are installing it on:
-
-| Elasticsearch Version | Plugin URL |
-|-----------------------|------------|
-| v8.11.4               | TBD        |
-| v7.17.14              | TBD        |
-| v7.17.13              | TBD        |
-| v7.17.12              | TBD        |
-| v7.17.11              | TBD        |
-
+Please, make sure that the plugin URL corresponds to the version of elasticsearch that you are installing it on.
 
 The installation command needs to be executed on all nodes in the cluster, after which all nodes have to be restarted before you can start 
 using this plug functionality.

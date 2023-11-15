@@ -1,3 +1,24 @@
+// Identify the version of elasticsearch dependencies
+def versionsDir=new File(buildDir, "versions")
+versionsDir.mkdirs()
+def versionsFile =  new File(versionsDir, "versions-${elasticsearch_branch}.properties")
+if (!versionsFile.exists()) {
+  new URL("https://raw.githubusercontent.com/elastic/elasticsearch/${elasticsearch_branch}/build-tools-internal/version.properties")
+          .withInputStream{ i -> versionsFile.withOutputStream{ it << i }}
+}
+def versions = new Properties()
+versionsFile.withInputStream { versions.load(it) }
+
+task printProps {
+  doFirst {
+    println versions.getProperty("lucene")
+  }
+}
+
+def luceneVersion = versions.getProperty("lucene")
+def junitVersion = versions.getProperty("junit")
+def hamcrestVersion = versions.getProperty("hamcrest")
+
 buildscript {
   repositories {
     maven {
