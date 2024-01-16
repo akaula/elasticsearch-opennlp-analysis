@@ -16,6 +16,7 @@
 
 package studio.akaula.opennlp;
 
+import opennlp.tools.lemmatizer.DictionaryLemmatizer;
 import opennlp.tools.lemmatizer.LemmatizerModel;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.sentdetect.SentenceModel;
@@ -35,7 +36,7 @@ public class OpenNLPAnalysisPlugin extends Plugin implements AnalysisPlugin {
     private final CachedResourceLoader<POSModel> posModelCache = new CachedResourceLoader<>();
     private final CachedResourceLoader<SentenceModel> sentenceModelCache = new CachedResourceLoader<>();
     private final CachedResourceLoader<TokenizerModel> tokenizerModelCache = new CachedResourceLoader<>();
-    private final CachedResourceLoader<byte[]> dictionaryLemmatizerCache = new CachedResourceLoader<>();
+    private final CachedResourceLoader<DictionaryLemmatizer> dictionaryLemmatizerCache = new CachedResourceLoader<>();
     private final CachedResourceLoader<LemmatizerModel> lemmatizerModelCache = new CachedResourceLoader<>();
 
     @Override
@@ -46,18 +47,11 @@ public class OpenNLPAnalysisPlugin extends Plugin implements AnalysisPlugin {
                 dictionaryLemmatizerCache,
                 lemmatizerModelCache,
                 environment,
-                indexSettings,
                 name,
                 settings
             ),
             "opennlp_pos",
-            (indexSettings, environment, name, settings) -> new OpenNLPPOSFilterFactory(
-                posModelCache,
-                environment,
-                indexSettings,
-                name,
-                settings
-            )
+            (indexSettings, environment, name, settings) -> new OpenNLPPOSFilterFactory(posModelCache, environment, name, settings)
         );
     }
 

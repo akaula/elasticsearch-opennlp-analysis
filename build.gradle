@@ -100,9 +100,9 @@ repositories {
 }
 
 dependencies {
-  compileOnly "org.apache.lucene:lucene-analyzers-common:${luceneVersion}"
+  compileOnly "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
 
-  implementation ("org.apache.lucene:lucene-analyzers-opennlp:${luceneVersion}") {
+  implementation ("org.apache.lucene:lucene-analysis-opennlp:${luceneVersion}") {
     exclude group: 'org.apache.opennlp'
   }
   implementation "org.apache.opennlp:opennlp-tools:${opennlpVersion}"
@@ -110,7 +110,7 @@ dependencies {
   testImplementation "org.elasticsearch:elasticsearch:${pluginApiVersion}"
   testImplementation "org.elasticsearch:elasticsearch-core:${pluginApiVersion}"
   testImplementation "org.elasticsearch.test:framework:${pluginApiVersion}"
-  testImplementation "org.apache.lucene:lucene-analyzers-common:${luceneVersion}"
+  testImplementation "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
   testImplementation ("junit:junit:${junitVersion}"){
     exclude group: 'org.hamcrest'
   }

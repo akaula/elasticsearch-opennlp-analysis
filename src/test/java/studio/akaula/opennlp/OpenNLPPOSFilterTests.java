@@ -18,7 +18,7 @@ package studio.akaula.opennlp;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.analysis.IndexAnalyzers;
 
-import static org.apache.lucene.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
+import static org.apache.lucene.tests.analysis.BaseTokenStreamTestCase.assertTokenStreamContents;
 
 public class OpenNLPPOSFilterTests extends OpenNLPTestCase {
 
