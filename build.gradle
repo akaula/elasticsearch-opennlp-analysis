@@ -18,7 +18,6 @@ task printProps {
 def luceneVersion = versions.getProperty("lucene")
 def junitVersion = versions.getProperty("junit")
 def hamcrestVersion = versions.getProperty("hamcrest")
-def log4jVersion = versions.getProperty("log4j")
 
 buildscript {
   repositories {
@@ -100,6 +99,9 @@ repositories {
 }
 
 dependencies {
+  compileOnly "org.elasticsearch:elasticsearch:${pluginApiVersion}"
+  compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-api:${pluginApiVersion}"
+  compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${pluginApiVersion}"
   compileOnly "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
 
   implementation ("org.apache.lucene:lucene-analysis-opennlp:${luceneVersion}") {
@@ -108,14 +110,14 @@ dependencies {
   implementation "org.apache.opennlp:opennlp-tools:${opennlpVersion}"
 
   testImplementation "org.elasticsearch:elasticsearch:${pluginApiVersion}"
-  testImplementation "org.elasticsearch:elasticsearch-core:${pluginApiVersion}"
   testImplementation "org.elasticsearch.test:framework:${pluginApiVersion}"
+  testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-api:${pluginApiVersion}"
+  testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${pluginApiVersion}"
   testImplementation "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
   testImplementation ("junit:junit:${junitVersion}"){
     exclude group: 'org.hamcrest'
   }
   testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
-  yamlRestTestRuntimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 }
 
 afterEvaluate {
