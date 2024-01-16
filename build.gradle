@@ -62,12 +62,12 @@ spotless {
 }
 
 if (release.toBoolean()) {
-  version="${pluginApiVersion}.${revision}"
+  version="${pluginApiVersion}+${revision}"
 } else {
   if (pluginApiVersion.endsWith('-SNAPSHOT')) {
-    version="${pluginApiVersion.substring(0, pluginApiVersion.length() - '-SNAPSHOT'.length())}.${revision}-SNAPSHOT"
+    version="${pluginApiVersion.substring(0, pluginApiVersion.length() - '-SNAPSHOT'.length())}-SNAPSHOT+${revision}"
   } else {
-    version="${pluginApiVersion}.${revision}-SNAPSHOT"
+    version="${pluginApiVersion}-SNAPSHOT+${revision}"
   }
 }
 

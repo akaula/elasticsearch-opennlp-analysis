@@ -41,6 +41,7 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
     private final CachedResourceLoader<LemmatizerModel> lemmatizerModelCache;
 
     public OpenNLPLemmatizerFilterFactory(
+
         CachedResourceLoader<DictionaryLemmatizer> dictionaryLemmatizerCache,
         CachedResourceLoader<LemmatizerModel> lemmatizerModelCache,
         Environment environment,

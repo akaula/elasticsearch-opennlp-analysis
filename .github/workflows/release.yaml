@@ -1,0 +1,31 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  gradle-build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'oracle'
+          architecture: x64
+          cache: gradle
+
+      - name: Execute Gradle build
+        run: ./gradlew build -P release=true
+
+      - name: Create Release
+        run: gh release create ${{ github.ref }} --generate-notes  ./build/distributions/opennlp-analysis-*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
