@@ -10,6 +10,12 @@ sudo bin/elasticsearch-plugin install https://plugin_url/
 ```
 Please, make sure that the plugin URL corresponds to the version of elasticsearch that you are installing it on.
 
+For example in order to install plugin v8.11.4+0 for elasticsearch v8.11.4 run
+
+```shell
+sudo bin/elasticsearch-plugin install https://github.com/akaula/elasticsearch-opennlp-analysis/releases/download/v8.11.4%2B0/opennlp-analysis-8.11.4+0.zip
+```
+
 The installation command needs to be executed on all nodes in the cluster, after which all nodes have to be restarted before you can start 
 using this plug functionality.
 
