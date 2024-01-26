@@ -5,9 +5,9 @@
 set -e
 # Configurable settings
 opennlp_version="${OPENNLP_VERSION:-1.9.4}"
-language="${LANGUAGE:-English}"
 lg="${LG:-en}"
-ud_set="${UD_SET:-EWT}"
+dataset_name="${DATASET_NAME:-treebank-9-rc1-unique}"
+dataset_path="${DATASET_PATH:-/Users/igor/Data/IAHLT/custom/treebank-9-rc1}"
 
 script_dir=${0:a:h}
 data_dir="${script_dir}/data"
@@ -25,32 +25,19 @@ if [[ ! -d "$opennlp_home" ]]; then
   rm "${opennlp_home}-bin.tar.gz"
 fi
 
-# Download Universal Dependencies if needed
-ud_version="2.12"
-ud_home="${data_dir}/ud-treebanks-v${ud_version}"
-ud_url="https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5150/ud-treebanks-v2.12.tgz"
-if [[ ! -d "$ud_home" ]]; then
-  curl -L -o "${ud_home}.tgz" "$ud_url"
-  tar -xzf "${ud_home}.tgz" --directory "$data_dir"
-  rm "${ud_home}.tgz"
-fi
+output_dir="${script_dir}/../src/test/resources/${dataset_name}"
 
-ud_set_lower="${ud_set:l}"
-output_dir="${script_dir}/../src/test/resources/${lg}-ud-${ud_set_lower}-${ud_version}"
 opennlp_opts=-Dlog4j.configurationFile=$opennlp_home/conf/log4j2.xml
 opennlp_classpath="$opennlp_home/lib/*"
-licence_file="$ud_home/UD_$language-$ud_set/LICENSE.txt"
-readme_file="$ud_home/UD_$language-$ud_set/README.md"
-data_file="$ud_home/UD_$language-$ud_set/${lg}_${ud_set_lower}-ud-train.conllu"
-test_file="$ud_home/UD_$language-$ud_set/${lg}_${ud_set_lower}-ud-test.conllu"
-sentence_model="$output_dir/opennlp-${lg}-ud-${ud_set_lower}-sentence-${ud_version}-${opennlp_version}.bin"
-tokenizer_model="$output_dir/opennlp-${lg}-ud-${ud_set_lower}-tokens-${ud_version}-${opennlp_version}.bin"
-pos_model="$output_dir/opennlp-${lg}-ud-${ud_set_lower}-pos-${ud_version}-${opennlp_version}.bin"
-lemmatizer_model="$output_dir/opennlp-${lg}-ud-${ud_set_lower}-lemmatizer-${ud_version}-${opennlp_version}.bin"
+data_file="$dataset_path/${dataset_name}-train.conllum"
+test_file="$dataset_path/${dataset_name}-test.conllu"
+sentence_model="$output_dir/${dataset_name}-sentence-${opennlp_version}.bin"
+tokenizer_model="$output_dir/${dataset_name}-tokens-${opennlp_version}.bin"
+pos_model="$output_dir/${dataset_name}-pos-${opennlp_version}.bin"
+lemmatizer_model="$output_dir/${dataset_name}-lemmatizer-${opennlp_version}.bin"
 
 # Create an output directory and copy appropriate licenses
 mkdir -p "$output_dir"
-cp "$licence_file" "$readme_file" "$output_dir"
 
 # Sentence Detector Training
 java $opennlp_opts -cp "$opennlp_classpath" opennlp.tools.cmdline.CLI \
