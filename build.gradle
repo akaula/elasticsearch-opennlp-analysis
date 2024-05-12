@@ -1,9 +1,9 @@
 // Identify the version of elasticsearch dependencies
 def versionsDir=new File(buildDir, "versions")
 versionsDir.mkdirs()
-def versionsFile =  new File(versionsDir, "versions-${elasticsearch_branch}.properties")
+def versionsFile =  new File(versionsDir, "versions-${elasticsearchBranch}.properties")
 if (!versionsFile.exists()) {
-  new URL("https://raw.githubusercontent.com/elastic/elasticsearch/${elasticsearch_branch}/build-tools-internal/version.properties")
+  new URL("https://raw.githubusercontent.com/elastic/elasticsearch/${elasticsearchBranch}/build-tools-internal/version.properties")
           .withInputStream{ i -> versionsFile.withOutputStream{ it << i }}
 }
 def versions = new Properties()
