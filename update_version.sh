@@ -54,12 +54,14 @@ sed -i '' "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gr
 sed -i '' "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
 sed -i '' "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
 
-./gradlew clean build
+# Make sure we build using JDK 17
+JAVA_HOME=`/usr/libexec/java_home -v17` ./gradlew clean build
 
 if [ "$release" = "true" ]; then
-    release_version="$version+$revision"
+    release_version="v$version+$revision"
     echo "Releasing... $release_version"
+    git add .
     git commit -m "Release $release_version"
     git tag -a "$release_version" -m "$release_version"
-    git push origin -tags "$git_branch"
+    git push origin --tags "$git_branch"
 fi
