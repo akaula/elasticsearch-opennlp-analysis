@@ -27,7 +27,10 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.analysis.AbstractTokenFilterFactory;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import static studio.akaula.utils.SettingsUtils.resolvePath;
@@ -48,7 +51,7 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
         String name,
         Settings settings
     ) {
-        super(name, settings);
+        super(name);
         this.dictionaryLemmatizerCache = dictionaryLemmatizerCache;
         this.lemmatizerModelCache = lemmatizerModelCache;
 
@@ -67,7 +70,10 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
         DictionaryLemmatizer dictionaryLemmatizer = null;
         if (dictionaryPath != null) {
             try {
-                dictionaryLemmatizer = dictionaryLemmatizerCache.getOrLoadResource(dictionaryPath, DictionaryLemmatizer::new);
+                dictionaryLemmatizer = dictionaryLemmatizerCache.getOrLoadResource(
+                    dictionaryPath,
+                    OpenNLPLemmatizerFilterFactory::loadDictionaryLemmatizer
+                );
             } catch (IOException exception) {
                 throw new IllegalArgumentException(
                     "Cannot load dictionary from [" + dictionaryPath + "] for opennlp_lemmatizer [" + this.name() + "]",
@@ -79,7 +85,10 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
         LemmatizerModel lemmatizerModel = null;
         if (lemmatizerModelPath != null) {
             try {
-                lemmatizerModel = lemmatizerModelCache.getOrLoadResource(lemmatizerModelPath, LemmatizerModel::new);
+                lemmatizerModel = lemmatizerModelCache.getOrLoadResource(
+                    lemmatizerModelPath,
+                    OpenNLPLemmatizerFilterFactory::loadLemmatizerModel
+                );
             } catch (IOException exception) {
                 throw new IllegalArgumentException(
                     "Cannot load lemmatizer model from [" + dictionaryPath + "] for opennlp_lemmatizer [" + this.name() + "]",
@@ -104,4 +113,17 @@ public class OpenNLPLemmatizerFilterFactory extends AbstractTokenFilterFactory {
         }
         return new OpenNLPLemmatizerFilter(tokenStream, lemmatizerOp);
     }
+
+    private static LemmatizerModel loadLemmatizerModel(Path modelFile) throws IOException {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(modelFile.toFile()))) {
+            return new LemmatizerModel(in);
+        }
+    }
+
+    private static DictionaryLemmatizer loadDictionaryLemmatizer(Path modelFile) throws IOException {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(modelFile.toFile()))) {
+            return new DictionaryLemmatizer(in);
+        }
+    }
+
 }

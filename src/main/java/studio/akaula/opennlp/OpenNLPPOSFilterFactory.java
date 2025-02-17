@@ -38,7 +38,7 @@ public class OpenNLPPOSFilterFactory extends AbstractTokenFilterFactory {
     private final CachedResourceLoader<POSModel> posModelCache;
 
     public OpenNLPPOSFilterFactory(CachedResourceLoader<POSModel> posModelCache, Environment environment, String name, Settings settings) {
-        super(name, settings);
+        super(name);
         this.posModelCache = posModelCache;
         posModelPath = resolvePath(environment, settings, "pos_model");
     }
