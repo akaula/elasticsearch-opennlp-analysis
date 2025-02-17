@@ -26,7 +26,7 @@ public class SettingsUtils {
         if (pathString == null) {
             return null;
         } else {
-            return environment.configFile().resolve(pathString);
+            return environment.configDir().resolve(pathString);
         }
     }
 }

@@ -26,7 +26,6 @@ import org.apache.lucene.analysis.opennlp.tools.NLPSentenceDetectorOp;
 import org.apache.lucene.analysis.opennlp.tools.NLPTokenizerOp;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
-import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenizerFactory;
 
 import java.io.IOException;
@@ -47,12 +46,11 @@ public class OpenNLPTokenizerFactory extends AbstractTokenizerFactory {
     public OpenNLPTokenizerFactory(
         CachedResourceLoader<SentenceModel> sentenceModelCache,
         CachedResourceLoader<TokenizerModel> tokenizerModelCache,
-        IndexSettings indexSettings,
         Environment environment,
         String name,
         Settings settings
     ) {
-        super(indexSettings, settings, name);
+        super(name);
         sentenceModelPath = resolvePath(environment, settings, "sentence_model");
         tokenizerModelPath = resolvePath(environment, settings, "tokenizer_model");
         this.sentenceModelCache = sentenceModelCache;

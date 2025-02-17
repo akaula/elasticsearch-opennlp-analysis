@@ -59,10 +59,9 @@ public class OpenNLPAnalysisPlugin extends Plugin implements AnalysisPlugin {
     public Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> getTokenizers() {
         return Map.of(
             "opennlp",
-            (indexSettings, environment, name, settings) -> new OpenNLPTokenizerFactory(
+            (_, environment, name, settings) -> new OpenNLPTokenizerFactory(
                 sentenceModelCache,
                 tokenizerModelCache,
-                indexSettings,
                 environment,
                 name,
                 settings

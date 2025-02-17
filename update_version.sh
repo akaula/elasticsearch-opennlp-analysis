@@ -54,8 +54,8 @@ sed -i '' "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gr
 sed -i '' "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
 sed -i '' "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
 
-# Make sure we build using JDK 17
-JAVA_HOME=`/usr/libexec/java_home -v17` ./gradlew clean build
+# Make sure we build using JDK 21
+JAVA_HOME=`/usr/libexec/java_home -v21` ./gradlew clean build
 
 if [ "$release" = "true" ]; then
     release_version="v$version+$revision"
