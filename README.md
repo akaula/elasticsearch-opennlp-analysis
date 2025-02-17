@@ -16,12 +16,12 @@ For example in order to install plugin v8.15.0+0 for elasticsearch v8.15.0 run
 sudo bin/elasticsearch-plugin install https://github.com/akaula/elasticsearch-opennlp-analysis/releases/download/v8.15.0%2B0/opennlp-analysis-8.15.0+0.zip
 ```
 
-The installation command needs to be executed on all nodes in the cluster, after which all nodes have to be restarted before you can start 
+The installation command needs to be executed on all nodes in the cluster, after which all nodes have to be restarted before you can start
 using this plug functionality.
 
 ## Offline installation
 
-To perform installation on the system that are not connected to internet, download the corresponding plugin file from the table above and 
+To perform installation on the system that are not connected to internet, download the corresponding plugin file from the table above and
 install it using `file:` url:
 
 ```shell
@@ -30,7 +30,7 @@ sudo bin/elasticsearch-plugin install file:///path_to_plugin_zip_file
 
 ## Removal
 
-Before uninstalling the plugin make sure that you don't have any indices that are using plugin any tokenizers and filters provided by this 
+Before uninstalling the plugin make sure that you don't have any indices that are using plugin any tokenizers and filters provided by this
 plugin. Once all indices are deleted remove the plugin from all node using the following command:
 
 
@@ -41,12 +41,12 @@ sudo bin/elasticsearch-plugin remove opennlp-analysis
 ## Plugin functionality
 
 The `analysis-openlp` plugin provides `opennlp` tokenizer and two token filters: `opennlp_pos` and `opennlp_lemmatizer`, that expose that
-functionality provided by [Apache OpenNLP](https://opennlp.apache.org) library version 1.9.1. 
+functionality provided by [Apache OpenNLP](https://opennlp.apache.org) library version 1.9.1.
 
 ## Models
 
-The plugin requires models trained using OpenNLP 1.9.4 or bellow. The model files have to be placed into `config` directory of each 
-elasticesearch node. For future compatibility we recommend placing the model into `config/opennlp-analysys` directory. Please note that 
+The plugin requires models trained using OpenNLP 1.9.4 or bellow. The model files have to be placed into `config` directory of each
+elasticesearch node. For future compatibility we recommend placing the model into `config/opennlp-analysys` directory. Please note that
 paths to the models specified in the settings are resolved relative to the `config` directory.
 
 ### OpenNLP Tokenizer
@@ -73,7 +73,7 @@ POST _analyze
 
 ### OpenNLP POS Token Filter
 
-The `opennlp_pos` token filter provides OpenNLP Part-of-Speech Tagger functionality. This token filter requires the following setting to be 
+The `opennlp_pos` token filter provides OpenNLP Part-of-Speech Tagger functionality. This token filter requires the following setting to be
 specified:
 
 - `pos_model_path` - should point to the OpenNLP Part-of-Speech Tagger model.
@@ -109,13 +109,13 @@ one of the following setting to be specified:
 - `lemmatizer_model_path` - should point to the OpenNLP Part-of-Speech Tagger model.
 
 Either `dictionary_path` or `lemmatizer_model_path` have to be specified. If both of them are present, the filter tries to resolve each
-token against the dictionary first and if no matches are found, the token is resolved using the supplied model. 
+token against the dictionary first and if no matches are found, the token is resolved using the supplied model.
 
-The `opennlp_lemmatizer` token filter expects all tokens to have part-of-speech tag assigned by the OpenNLP POS Token Filter, which should 
+The `opennlp_lemmatizer` token filter expects all tokens to have part-of-speech tag assigned by the OpenNLP POS Token Filter, which should
 appear earlier in the analysis chain.
 
-Assuming that the pos models reside in the `config/opennlp-analysys/en-ud-ewt-2.12` directory the following elasticsearch command will test 
-the token filter on the supplied string. Please, not that for the optimal performance it is using `opennlp` tokenizer and `opennlp_pos` 
+Assuming that the pos models reside in the `config/opennlp-analysys/en-ud-ewt-2.12` directory the following elasticsearch command will test
+the token filter on the supplied string. Please, not that for the optimal performance it is using `opennlp` tokenizer and `opennlp_pos`
 token filter prior to invoking the lemmatizer.
 
 ```
@@ -145,11 +145,11 @@ POST _analyze
 ### General recommendation on using OpenNLP components in index settings:
 
 Depending on the preprocessing done to the text using to train OpenNLP model, it might be useful to do some normalization to punctuation
-symbols. For example, symbols such as `‘` or `’` can be normalized to `'`. These operations can be done by adding `mapping` character 
-filter to the analyzer. 
+symbols. For example, symbols such as `‘` or `’` can be normalized to `'`. These operations can be done by adding `mapping` character
+filter to the analyzer.
 
 Some lemmatizer models produce multiple output tokens for a single input token. In such cases the output tokens will be separated by `+`.
-For example, an English contraction `isn't` might be converted into `be+not`. An `pattern_capture` token filter can be added after the 
+For example, an English contraction `isn't` might be converted into `be+not`. An `pattern_capture` token filter can be added after the
 lemmatizer in order split such tokens.
 
 Combining all these methods together we will end up with the analyzer like this:
@@ -229,7 +229,7 @@ PUT test
 
 ## Building the plugin from the sources:
 
-To build the plugin from the sources checkout the appropriate branch, update the `build.gradle` file to select required version and run the 
+To build the plugin from the sources checkout the appropriate branch, update the `build.gradle` file to select required version and run the
 following command:
 
 ```shell
