@@ -10,7 +10,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'oracle'
           architecture: x64
           cache: gradle
