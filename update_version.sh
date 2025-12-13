@@ -48,11 +48,11 @@ fi
 echo "Using gradle $gradle_version"
 
 # Detect gradle version
-sed -i '' "s/^release=.*/release=$release/" "$git_root/gradle.properties"
-sed -i '' "s/^revision=.*/revision=$revision/" "$git_root/gradle.properties"
-sed -i '' "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gradle.properties"
-sed -i '' "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
-sed -i '' "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
+sed -i "s/^release=.*/release=$release/" "$git_root/gradle.properties"
+sed -i "s/^revision=.*/revision=$revision/" "$git_root/gradle.properties"
+sed -i "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gradle.properties"
+sed -i "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
+sed -i "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
 
 # Make sure we build using JDK 21
 JAVA_HOME=`/usr/libexec/java_home -v21` ./gradlew clean
