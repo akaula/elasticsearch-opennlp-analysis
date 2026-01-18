@@ -54,6 +54,9 @@ sed -i "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gradl
 sed -i "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
 sed -i "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
 
+./gradlew clean
+./gradlew build
+
 if [ "$release" = "true" ]; then
     release_version="v$version+$revision"
     echo "Releasing... $release_version"
