@@ -7,20 +7,22 @@
 
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "none",
-			"installMaven": "false",
-			"installGradle": "true"
+			"version": "latest",
+			"jdkDistro": "ms",
+			"gradleVersion": "latest",
+			"mavenVersion": "latest",
+			"antVersion": "latest",
+			"groovyVersion": "latest"
 		},
 		"ghcr.io/devcontainers/features/common-utils:2": {
-			"installZsh": true,
-			"configureZshAsDefaultShell": true,
-			"installOhMyZsh": true,
-			"installOhMyZshConfig": true,
-			"upgradePackages": true,
-			"installSsl": true,
-			"username": "automatic",
-			"userUid": "automatic",
-			"userGid": "automatic"
+			// "installZsh": true,
+			// "installOhMyZsh": true,
+			// "installOhMyZshConfig": true,
+			// "upgradePackages": true,
+			// "installSsl": true,
+			// "username": "automatic",
+			// "userUid": "automatic",
+			// "userGid": "automatic"
 		}
 	}
 }
