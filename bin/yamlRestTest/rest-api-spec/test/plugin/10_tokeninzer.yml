@@ -1,0 +1,15 @@
+## Sample rest test
+---
+"Basic OpenNLP tokenizer test.":
+  - do:
+      indices.analyze:
+        body:
+          text:  "Don't Panic."
+          tokenizer:
+            type: "opennlp"
+            sentence_model_path: "opennlp_analysis/opennlp-en-ud-ewt-sentence.bin"
+            tokenizer_model_path: "opennlp_analysis/opennlp-en-ud-ewt-tokens.bin"
+  - length: { tokens: 3 }
+  - match:  { tokens.0.token: "Don't" }
+  - match:  { tokens.1.token: "Panic" }
+  - match:  { tokens.2.token: "." }

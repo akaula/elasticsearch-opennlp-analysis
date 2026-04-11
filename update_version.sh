@@ -6,6 +6,14 @@
 # To build the latest snapshot from the current branch run ./update_version.sh
 
 set -e
+
+# Detect OS for sed compatibility
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  SED_INPLACE=("sed" "-i" "")
+else
+  SED_INPLACE=("sed" "-i")
+fi
+
 git_root=$(git rev-parse --show-toplevel)
 git_branch=$(git branch --show-current)
 revision=${REVISION:-0}
@@ -48,11 +56,11 @@ fi
 echo "Using gradle $gradle_version"
 
 # Detect gradle version
-sed -i '' -e "s/^release=.*/release=$release/" "$git_root/gradle.properties"
-sed -i '' -e "s/^revision=.*/revision=$revision/" "$git_root/gradle.properties"
-sed -i '' -e "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gradle.properties"
-sed -i '' -e "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
-sed -i '' -e "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
+"${SED_INPLACE[@]}" -e "s/^release=.*/release=$release/" "$git_root/gradle.properties"
+"${SED_INPLACE[@]}" -e "s/^revision=.*/revision=$revision/" "$git_root/gradle.properties"
+"${SED_INPLACE[@]}" -e "s/^elasticsearchBranch=.*/elasticsearchBranch=$branch/" "$git_root/gradle.properties"
+"${SED_INPLACE[@]}" -e "s/^pluginApiVersion=.*/pluginApiVersion=$version/" "$git_root/gradle.properties"
+"${SED_INPLACE[@]}" -e "s/^distributionUrl=.*/distributionUrl=https\\\\:\/\/services.gradle.org\/distributions\/gradle-$gradle_version-all.zip/" "$git_root/gradle/wrapper/gradle-wrapper.properties"
 
 ./gradlew clean
 ./gradlew build
